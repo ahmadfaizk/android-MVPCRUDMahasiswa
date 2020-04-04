@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Mahasiswaku</string>
+    <string name="nrp">NRP</string>
+    <string name="nama">Nama</string>
+    <string name="alamat">Alamat</string>
+    <string name="add">Add</string>
+</resources>
