@@ -8,10 +8,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.faiz.mahasiswaku.R;
+import com.faiz.mahasiswaku.api.ApiClient;
 import com.faiz.mahasiswaku.model.Mahasiswa;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MahasiswaAdapter extends RecyclerView.Adapter<MahasiswaAdapter.ViewHolder> {
 
@@ -24,11 +31,6 @@ public class MahasiswaAdapter extends RecyclerView.Adapter<MahasiswaAdapter.View
 
     public void setListMahasiswa(ArrayList<Mahasiswa> listMahasiswa) {
         this.listMahasiswa = listMahasiswa;
-        notifyDataSetChanged();
-    }
-
-    public void clearListMahasiswa() {
-        listMahasiswa.clear();
         notifyDataSetChanged();
     }
 
@@ -49,6 +51,11 @@ public class MahasiswaAdapter extends RecyclerView.Adapter<MahasiswaAdapter.View
         holder.tvNRP.setText(String.valueOf(mahasiswa.getNrp()));
         holder.tvNama.setText(mahasiswa.getNama());
         holder.tvAlamat.setText(mahasiswa.getAlamat());
+        Glide.with(holder.itemView)
+                .load(ApiClient.getImageUrl(mahasiswa.getFoto()))
+                .placeholder(R.drawable.ic_user)
+                .apply(new RequestOptions().override(60, 60))
+                .into(holder.imgFoto);
         holder.itemView.setOnClickListener(v -> onClickListener.onClick(mahasiswa));
     }
 
@@ -58,14 +65,13 @@ public class MahasiswaAdapter extends RecyclerView.Adapter<MahasiswaAdapter.View
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNRP;
-        TextView tvNama;
-        TextView tvAlamat;
+        @BindView(R.id.tv_nrp) TextView tvNRP;
+        @BindView(R.id.tv_nama) TextView tvNama;
+        @BindView(R.id.tv_alamat) TextView tvAlamat;
+        @BindView(R.id.img_mahasiswa) CircleImageView imgFoto;
         private ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvNRP = itemView.findViewById(R.id.tv_nrp);
-            tvNama = itemView.findViewById(R.id.tv_nama);
-            tvAlamat = itemView.findViewById(R.id.tv_alamat);
+            ButterKnife.bind(this, itemView);
         }
     }
 

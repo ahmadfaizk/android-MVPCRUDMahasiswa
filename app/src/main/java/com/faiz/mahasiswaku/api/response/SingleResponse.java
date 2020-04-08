@@ -1,9 +1,12 @@
 package com.faiz.mahasiswaku.api.response;
 
+import com.faiz.mahasiswaku.model.Error;
+
 public class SingleResponse<T> {
     private boolean error;
     private String message;
     private T data;
+    private Error errors;
 
     public boolean isError() {
         return error;
@@ -27,5 +30,13 @@ public class SingleResponse<T> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    public Error getErrors() {
+        return errors;
+    }
+
+    public void setErrors(Error errors) {
+        this.errors = errors;
     }
 }

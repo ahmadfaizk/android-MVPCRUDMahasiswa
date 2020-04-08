@@ -1,5 +1,6 @@
 package com.faiz.mahasiswaku.view.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,42 +8,48 @@ import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.faiz.mahasiswaku.view.adapter.MahasiswaAdapter;
 import com.faiz.mahasiswaku.R;
-import com.faiz.mahasiswaku.api.ApiClient;
-import com.faiz.mahasiswaku.api.Sercvices;
-import com.faiz.mahasiswaku.api.response.MultipleResponse;
 import com.faiz.mahasiswaku.model.Mahasiswa;
+import com.faiz.mahasiswaku.presenter.MainContract;
+import com.faiz.mahasiswaku.presenter.MainPresenter;
+import com.faiz.mahasiswaku.view.adapter.MahasiswaAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainContract.View {
 
-    RecyclerView rvMahasiswa;
-    FloatingActionButton fabAdd;
-    ProgressBar progressBar;
+    @BindView(R.id.rv_mahasiswa) RecyclerView rvMahasiswa;
+    @BindView(R.id.fab_add) FloatingActionButton fabAdd;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
     MahasiswaAdapter adapter;
+    MainPresenter presenter;
+    ProgressDialog progressDialog;
+
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        rvMahasiswa = findViewById(R.id.rv_mahasiswa);
-        fabAdd = findViewById(R.id.fab_add);
-        progressBar = findViewById(R.id.progressBar);
+        unbinder = ButterKnife.bind(this);
+        presenter = new MainPresenter(this);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Loading ...");
 
         rvMahasiswa.setHasFixedSize(true);
         rvMahasiswa.setLayoutManager(new LinearLayoutManager(this));
@@ -50,77 +57,55 @@ public class MainActivity extends AppCompatActivity {
         rvMahasiswa.setAdapter(adapter);
         DividerItemDecoration decoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         rvMahasiswa.addItemDecoration(decoration);
-        rvMahasiswa.setItemAnimator(new DefaultItemAnimator());
-        refreshData();
+        presenter.onStart();
 
         fabAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, AddUpdateMahasiswaActivity.class);
+            Intent intent = new Intent(this, AddUpdateMahasiswaActivity.class);
             startActivityForResult(intent, AddUpdateMahasiswaActivity.REQUEST_ADD);
         });
 
         adapter.setOnClickListener(mahasiswa -> {
-            Intent intent = new Intent(MainActivity.this, AddUpdateMahasiswaActivity.class);
+            Intent intent = new Intent(this, AddUpdateMahasiswaActivity.class);
             intent.putExtra(AddUpdateMahasiswaActivity.EXTRA_MAHASISWA, mahasiswa);
             startActivityForResult(intent, AddUpdateMahasiswaActivity.REQUEST_UPDATE);
         });
-    }
 
-    public void refreshData() {
-        showLoading(true);
-        Retrofit retrofit = ApiClient.getClient();
-        retrofit.create(Sercvices.class).getAllMahasiswa().enqueue(new Callback<MultipleResponse<Mahasiswa>>() {
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onResponse(Call<MultipleResponse<Mahasiswa>> call, Response<MultipleResponse<Mahasiswa>> response) {
-                showLoading(false);
-                boolean error = response.body().isError();
-                if (!error) {
-                    ArrayList<Mahasiswa> list = response.body().getData();
-                    if (list.isEmpty()) {
-                        showSnackBar("Data Mahasiswa Kosong");
-                    } else {
-                        adapter.setListMahasiswa(list);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MultipleResponse<Mahasiswa>> call, Throwable t) {
-                showLoading(false);
-                showSnackBar(t.getMessage());
-                t.printStackTrace();
+            public void onRefresh() {
+                presenter.requestData();
             }
         });
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AddUpdateMahasiswaActivity.REQUEST_ADD) {
-            if (resultCode == AddUpdateMahasiswaActivity.RESULT_ADD) {
-                refreshData();
-                showSnackBar("Satu Mahasiswa Berhasil Ditambahkan");
-            }
-        }
-        else if (requestCode == AddUpdateMahasiswaActivity.REQUEST_UPDATE) {
-            if (resultCode == AddUpdateMahasiswaActivity.RESULT_UPDATE) {
-                refreshData();
-                showSnackBar("Satu Mahasiswa Berhasil Diubah");
-            }
-            else if (resultCode == AddUpdateMahasiswaActivity.RESULT_DELETE) {
-                refreshData();
-                showSnackBar("Satu Mahasiswa Berhasil Dihapus");
-            }
-        }
+        presenter.onResult(requestCode, resultCode);
     }
 
-    private void showSnackBar(String message) {
-        Snackbar.make(rvMahasiswa, message, Snackbar.LENGTH_LONG).show();
+    @Override
+    public void refreshData(ArrayList<Mahasiswa> list) {
+        adapter.setListMahasiswa(list);
+        swipeLayout.setRefreshing(false);
     }
 
-    private void showLoading(Boolean state) {
+    @Override
+    public void showLoading(@NotNull Boolean state) {
         if (state)
-            progressBar.setVisibility(View.VISIBLE);
+            progressDialog.show();
         else
-            progressBar.setVisibility(View.GONE);
+            progressDialog.dismiss();
+    }
+
+    @Override
+    public void showMessage(String message) {
+        Snackbar.make(rvMahasiswa, message, Snackbar.LENGTH_LONG).show();
     }
 }

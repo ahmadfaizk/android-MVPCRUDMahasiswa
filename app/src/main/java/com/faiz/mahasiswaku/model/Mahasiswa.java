@@ -8,6 +8,10 @@ public class Mahasiswa implements Parcelable {
     private int nrp;
     private String nama;
     private String alamat;
+    private String foto;
+
+    public Mahasiswa() {
+    }
 
     public Mahasiswa(int nrp, String nama, String alamat) {
         this.nrp = nrp;
@@ -15,27 +19,12 @@ public class Mahasiswa implements Parcelable {
         this.alamat = alamat;
     }
 
-    public Mahasiswa() {
-    }
-
     protected Mahasiswa(Parcel in) {
         id = in.readInt();
         nrp = in.readInt();
         nama = in.readString();
         alamat = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeInt(nrp);
-        dest.writeString(nama);
-        dest.writeString(alamat);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        foto = in.readString();
     }
 
     public static final Creator<Mahasiswa> CREATOR = new Creator<Mahasiswa>() {
@@ -80,5 +69,27 @@ public class Mahasiswa implements Parcelable {
 
     public void setAlamat(String alamat) {
         this.alamat = alamat;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(nrp);
+        dest.writeString(nama);
+        dest.writeString(alamat);
+        dest.writeString(foto);
     }
 }

@@ -4,4 +4,8 @@
     <string name="nama">Nama</string>
     <string name="alamat">Alamat</string>
     <string name="add">Add</string>
+    <string-array name="arr_media">
+        <item>Kamera</item>
+        <item>Galeri</item>
+    </string-array>
 </resources>

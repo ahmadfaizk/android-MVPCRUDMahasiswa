@@ -25,4 +25,8 @@ public class ApiClient {
         }
         return retrofit;
     }
+
+    public static String getImageUrl(String image) {
+        return BASE_URL + "foto/" + image;
+    }
 }
