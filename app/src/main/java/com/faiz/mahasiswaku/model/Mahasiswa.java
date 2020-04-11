@@ -10,9 +10,6 @@ public class Mahasiswa implements Parcelable {
     private String alamat;
     private String foto;
 
-    public Mahasiswa() {
-    }
-
     public Mahasiswa(int nrp, String nama, String alamat) {
         this.nrp = nrp;
         this.nama = nama;

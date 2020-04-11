@@ -68,19 +68,26 @@ public class AddUpdatePresenter implements AddUpdateContract.Presenter {
         if (nrpS.isEmpty()) {
             view.setErrorNrp("NRP Tidak boleh kosong");
             ready = false;
+        } else {
+            view.setErrorNrp("");
         }
         if (name.isEmpty()) {
             view.setErrorName("Nama Tidak boleh kosong");
             ready = false;
+        } else {
+            view.setErrorName("");
         }
         if (address.isEmpty()) {
             view.setErrorAddress("Alamat Tidak boleh kosong");
             ready = false;
+        } else {
+            view.setErrorAddress("");
         }
 
         int nrp = 0;
         try {
             nrp = Integer.parseInt(nrpS);
+            view.setErrorNrp("");
         } catch (NumberFormatException e) {
             view.setErrorNrp("Format NRP Salah");
             ready = false;
@@ -147,6 +154,7 @@ public class AddUpdatePresenter implements AddUpdateContract.Presenter {
 
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = view.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
@@ -174,7 +182,7 @@ public class AddUpdatePresenter implements AddUpdateContract.Presenter {
     public void create(Mahasiswa mahasiswa) {
         view.showLoading(true);
         File photo = new File(currentPhotoPath);
-        RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), photo);
+        RequestBody requestBody = RequestBody.create(photo, MediaType.parse("image/*"));
         MultipartBody.Part foto = MultipartBody.Part.createFormData("foto", photo.getName(), requestBody);
 
         HashMap<String, RequestBody> map = new HashMap<>();
@@ -215,7 +223,7 @@ public class AddUpdatePresenter implements AddUpdateContract.Presenter {
         MultipartBody.Part foto = null;
         if (currentPhotoPath != null) {
             File file = new File(currentPhotoPath);
-            RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), file);
+            RequestBody requestBody = RequestBody.create(file, MediaType.parse("image/*"));
             foto = MultipartBody.Part.createFormData("foto", file.getName(), requestBody);
         }
 
@@ -295,10 +303,10 @@ public class AddUpdatePresenter implements AddUpdateContract.Presenter {
     }
 
     private RequestBody createPartFromString(String descriptionString) {
-        return RequestBody.create(okhttp3.MultipartBody.FORM, descriptionString);
+        return RequestBody.create(descriptionString, okhttp3.MultipartBody.FORM);
     }
 
     private RequestBody createPartFromInt(int descriptionInt) {
-        return RequestBody.create(okhttp3.MultipartBody.FORM, String.valueOf(descriptionInt));
+        return RequestBody.create(String.valueOf(descriptionInt), MultipartBody.FORM);
     }
 }

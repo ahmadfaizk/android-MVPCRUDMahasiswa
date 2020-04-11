@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -56,7 +55,6 @@ public class AddUpdateMahasiswaActivity extends AppCompatActivity implements Vie
     public static final int RESULT_UPDATE = 201;
     public static final int RESULT_DELETE = 301;
     private final int ALERT_DIALOG_CLOSE = 10;
-    private final int ALERT_DIALOG_DELETE = 20;
     public static final int REQUEST_IMAGE_CAPTURE = 1;
     public static final int REQUEST_IMAGE_MEDIA = 2;
 
@@ -105,6 +103,7 @@ public class AddUpdateMahasiswaActivity extends AppCompatActivity implements Vie
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int ALERT_DIALOG_DELETE = 20;
         switch (item.getItemId()) {
             case R.id.action_delete:
                 showAlertDialog(ALERT_DIALOG_DELETE);
@@ -186,17 +185,17 @@ public class AddUpdateMahasiswaActivity extends AppCompatActivity implements Vie
 
     @Override
     public String getNrp() {
-        return edtNRP.getText().toString();
+        return String.valueOf(edtNRP.getText());
     }
 
     @Override
     public String getName() {
-        return edtNama.getText().toString();
+        return String.valueOf(edtNama.getText());
     }
 
     @Override
     public String getAddress() {
-        return edtAlamat.getText().toString();
+        return String.valueOf(edtAlamat.getText());
     }
 
     @Override
@@ -260,7 +259,9 @@ public class AddUpdateMahasiswaActivity extends AppCompatActivity implements Vie
         View view = this.getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
     }
 }

@@ -3,8 +3,6 @@ package com.faiz.mahasiswaku.view.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,12 +68,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             startActivityForResult(intent, AddUpdateMahasiswaActivity.REQUEST_UPDATE);
         });
 
-        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenter.requestData();
-            }
-        });
+        swipeLayout.setOnRefreshListener(() -> presenter.requestData());
     }
 
     @Override

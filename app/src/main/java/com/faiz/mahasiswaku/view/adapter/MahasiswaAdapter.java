@@ -64,7 +64,7 @@ public class MahasiswaAdapter extends RecyclerView.Adapter<MahasiswaAdapter.View
         return listMahasiswa.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_nrp) TextView tvNRP;
         @BindView(R.id.tv_nama) TextView tvNama;
         @BindView(R.id.tv_alamat) TextView tvAlamat;
