@@ -39,9 +39,8 @@ public class MainPresenter implements MainContract.Presenter {
                             ArrayList<Mahasiswa> list = response.body().getData();
                             if (list.isEmpty()) {
                                 view.showMessage("Data Kosong");
-                            } else {
-                                view.refreshData(list);
                             }
+                            view.refreshData(list);
                         }
                     }
 

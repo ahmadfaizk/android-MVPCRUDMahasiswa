@@ -271,7 +271,7 @@ public class AddUpdatePresenter implements AddUpdateContract.Presenter {
             view.setErrorAddress(error.getAlamat().get(0));
         }
         if (error.getFoto() != null) {
-            view.showMessage(error.getAlamat().get(0));
+            view.showMessage(error.getFoto().get(0));
         }
     }
 
@@ -286,7 +286,7 @@ public class AddUpdatePresenter implements AddUpdateContract.Presenter {
                         view.showLoading(false);
                         boolean error = response.body().isError();
                         if (!error) {
-                            view.setResult(AddUpdateMahasiswaActivity.RESULT_UPDATE);
+                            view.setResult(AddUpdateMahasiswaActivity.RESULT_DELETE);
                             view.finish();
                         } else {
                             view.showMessage(response.body().getMessage());

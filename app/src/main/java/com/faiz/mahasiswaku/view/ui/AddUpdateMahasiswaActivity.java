@@ -233,7 +233,6 @@ public class AddUpdateMahasiswaActivity extends AppCompatActivity implements Vie
         Glide.with(this)
                 .load(file)
                 .placeholder(R.drawable.ic_user)
-                .apply(new RequestOptions().override(150, 150))
                 .into(imgFoto);
     }
 
@@ -242,7 +241,6 @@ public class AddUpdateMahasiswaActivity extends AppCompatActivity implements Vie
         Glide.with(this)
                 .load(url)
                 .placeholder(R.drawable.ic_user)
-                .apply(new RequestOptions().override(150, 150))
                 .into(imgFoto);
     }
 

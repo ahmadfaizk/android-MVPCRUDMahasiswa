@@ -54,7 +54,6 @@ public class MahasiswaAdapter extends RecyclerView.Adapter<MahasiswaAdapter.View
         Glide.with(holder.itemView)
                 .load(ApiClient.getImageUrl(mahasiswa.getFoto()))
                 .placeholder(R.drawable.ic_user)
-                .apply(new RequestOptions().override(60, 60))
                 .into(holder.imgFoto);
         holder.itemView.setOnClickListener(v -> onClickListener.onClick(mahasiswa));
     }
